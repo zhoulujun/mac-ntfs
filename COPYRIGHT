@@ -1,0 +1,14 @@
+mac-ntfs
+Copyright (c) 2026 mac-ntfs contributors
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2
+as published by the Free Software Foundation. See LICENSE.
+
+The FSKit↔ntfs-3g bridge and related design draw from open-source
+projects released under GPL-2.0, including work published as xntfs
+(HuanchuanTech) and NTFSKit (whereteam). Those projects remain
+copyright of their respective authors.
+
+ntfs-3g / libntfs-3g is Copyright (c) Tuxera Inc. and contributors;
+see Engine/ntfs-3g/COPYING after running Scripts/fetch-ntfs3g.sh.

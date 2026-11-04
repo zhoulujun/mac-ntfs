@@ -1,0 +1,14 @@
+.DS_Store
+build/
+_tmp/
+DerivedData/
+*.xcuserdata
+*.xcworkspace/xcuserdata
+project.xcworkspace/
+MacNTFS.xcodeproj/
+mac-ntfs.xcodeproj/
+Engine/ntfs-3g/
+*.dmg
+*.pkg
+.notarize-cache/
+.swiftpm/

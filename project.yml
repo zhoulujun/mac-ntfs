@@ -1,0 +1,103 @@
+name: mac-ntfs
+options:
+  bundleIdPrefix: com.zhoulujun
+  deploymentTarget:
+    macOS: "26.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "26.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_HARDENED_RUNTIME: YES
+configs:
+  Debug: debug
+  Release: release
+
+targets:
+  MacNTFS:
+    type: application
+    platform: macOS
+    sources:
+      - path: App
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zhoulujun.mac-ntfs
+        PRODUCT_NAME: mac-ntfs
+        INFOPLIST_KEY_CFBundleDisplayName: mac-ntfs
+        INFOPLIST_KEY_LSUIElement: YES
+        INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright (c) mac-ntfs contributors. GPL-2.0."
+        CODE_SIGN_ENTITLEMENTS: App/MacNTFS.entitlements
+        LD_RUNPATH_SEARCH_PATHS: "@executable_path/../Frameworks"
+        GENERATE_INFOPLIST_FILE: YES
+        COMBINE_HIDPI_IMAGES: YES
+    dependencies:
+      - target: MacNTFSFS
+        embed: true
+        codeSign: true
+    scheme:
+      testTargets: []
+
+  MacNTFSFS:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: FSExtension
+        excludes:
+          - bridge
+      - path: FSExtension/bridge
+      - path: Shared/MacNTFSConfig.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zhoulujun.mac-ntfs.fsmodule
+        PRODUCT_NAME: MacNTFSFS
+        INFOPLIST_FILE: FSExtension/Info.plist
+        CODE_SIGN_ENTITLEMENTS: FSExtension/MacNTFSFS.entitlements
+        SWIFT_OBJC_BRIDGING_HEADER: FSExtension/Bridging-Header.h
+        CLANG_ENABLE_MODULES: YES
+        HEADER_SEARCH_PATHS:
+          - $(SRCROOT)/FSExtension/bridge
+          - $(SRCROOT)/build/libntfs-universal
+          - $(SRCROOT)/build/libntfs-universal/include
+          - $(SRCROOT)/build/libntfs-universal/include/ntfs-3g
+          - $(SRCROOT)/Engine/ntfs-3g/include
+          - $(SRCROOT)/Engine/ntfs-3g/include/ntfs-3g
+        LIBRARY_SEARCH_PATHS:
+          - $(SRCROOT)/build/libntfs-universal
+        OTHER_LDFLAGS:
+          - -lntfs-3g
+          - -liconv
+          - -framework
+          - CoreFoundation
+        SYSTEM_FRAMEWORK_SEARCH_PATHS: $(inherited)
+        OTHER_CFLAGS:
+          - -DHAVE_CONFIG_H
+          - -I$(SRCROOT)/build/libntfs-universal
+        GENERATE_INFOPLIST_FILE: NO
+        SKIP_INSTALL: YES
+        PRODUCT_MODULE_NAME: MacNTFSFS
+
+  mac-ntfs-cli:
+    type: tool
+    platform: macOS
+    sources:
+      - path: CLI
+      - path: Shared
+      - path: App/Model
+      - path: App/Services/DiskArbitrationMonitor.swift
+      - path: App/Services/ExtensionStatus.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zhoulujun.mac-ntfs.cli
+        PRODUCT_NAME: mac-ntfs
+        GENERATE_INFOPLIST_FILE: YES
+        CREATE_INFOPLIST_SECTION_IN_BINARY: YES
+        LD_RUNPATH_SEARCH_PATHS: "@executable_path"
+    dependencies:
+      - sdk: AppKit.framework
+      - sdk: FSKit.framework
+      - sdk: DiskArbitration.framework
